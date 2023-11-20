@@ -12,49 +12,77 @@ const userNameSchema = new Schema<UserName>({
   firstName: {
     type: String,
     required: [true, 'First name is required!'],
+    trim: true, // removed space
+    maxlength: [20, 'First name can not be allowed more then 20 characters'],
+    // custom validation
+    validate: {
+      validator: function (value: string) {
+        // we can revive value here as value
+        const firstNameStr = value.charAt(0).toUpperCase() + value.slice(1);
+        return firstNameStr === value;
+      },
+      message: '{VALUE} is not in capitalize formate',
+    },
   },
   middleName: {
     type: String,
+    trim: true,
   },
   lastName: {
     type: String,
+    trim: true,
     required: [true, 'Last name is required!'],
   },
 });
 
 const guardianSchema = new Schema<Guardian>({
-  fatherName: { type: String, required: [true, 'Father name is required!'] },
+  fatherName: {
+    type: String,
+    trim: true,
+    required: [true, 'Father name is required!'],
+  },
   fatherOccupation: {
     type: String,
+    trim: true,
     required: [true, 'First Occupation is required!'],
   },
   fatherContactNo: {
     type: String,
+    trim: true,
     required: [true, 'Father Contact number is required!'],
   },
   motherName: { type: String, required: [true, 'Mother name is required!'] },
   motherOccupation: {
     type: String,
+    trim: true,
     required: [true, 'Mother occupation is required!'],
   },
   motherContactNo: {
     type: String,
+    trim: true,
     required: [true, 'Mother contact number is required!'],
   },
 });
 
 const localGuardianSchema = new Schema<LocalGuardian>({
-  name: { type: String, required: [true, 'Local guardian name is required!'] },
+  name: {
+    type: String,
+    trim: true,
+    required: [true, 'Local guardian name is required!'],
+  },
   occupation: {
     type: String,
+    trim: true,
     required: [true, 'Local guardian occupation is required!'],
   },
   contactNo: {
     type: String,
+    trim: true,
     required: [true, 'Local guardian contact number is required!'],
   },
   address: {
     type: String,
+    trim: true,
     required: [true, 'Local guardian address is required!'],
   },
 });
@@ -71,14 +99,25 @@ const studentSchema = new Schema<Student>({
     required: true,
   }, // enum type
   dataOfBirth: { type: String },
-  email: { type: String, required: [true, 'Email is required!'], unique: true },
-  contactNo: { type: String, required: [true, 'Contact number is required!'] },
+  email: {
+    type: String,
+    trim: true,
+    required: [true, 'Email is required!'],
+    unique: true,
+  },
+  contactNo: {
+    type: String,
+    trim: true,
+    required: [true, 'Contact number is required!'],
+  },
   emergencyContactNo: {
     type: String,
+    trim: true,
     required: [true, 'Emergency contact number is required!'],
   },
   bloodGroup: {
     type: String,
+    trim: true,
     enum: {
       values: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
       message: '{VALUE} is not valid',
@@ -87,10 +126,12 @@ const studentSchema = new Schema<Student>({
   },
   presentAddress: {
     type: String,
+    trim: true,
     required: [true, 'Present address is required!'],
   },
   permanentAddress: {
     type: String,
+    trim: true,
     required: [true, 'Permanent address is required!'],
   },
   guardian: { type: guardianSchema, required: true },
