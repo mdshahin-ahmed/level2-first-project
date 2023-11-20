@@ -57,4 +57,4 @@ const studentSchema = new Schema<Student>({
 
 // Create model
 
-const Student = model<Student>('Student', studentSchema);
+export const StudentModel = model<Student>('Student', studentSchema); // 'Student' DB collection name
