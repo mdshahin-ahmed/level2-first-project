@@ -6,10 +6,11 @@ const createStudent = async (req: Request, res: Response) => {
   try {
     const { student: studentData } = req.body;
 
-    const { error } = studentValidationSchema.validate(studentData);
+    // data validation useing Joi
+    const { error, value } = studentValidationSchema.validate(studentData);
 
     // will call service function to send this data
-    const result = await StudentServices.createStudentIntoDB(studentData);
+    const result = await StudentServices.createStudentIntoDB(value);
 
     if (error) {
       res.status(500).json({
