@@ -1,4 +1,4 @@
-import { Schema, model, connect } from 'mongoose';
+import { Schema, model } from 'mongoose';
 import {
   Guardian,
   LocalGuardian,
@@ -56,3 +56,5 @@ const studentSchema = new Schema<Student>({
 });
 
 // Create model
+
+const Student = model<Student>('Student', studentSchema);
