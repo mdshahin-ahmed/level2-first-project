@@ -9,7 +9,6 @@ import {
 } from './student.interface';
 import bcrypt from 'bcrypt';
 import config from '../../config';
-import { NextFunction } from 'express';
 
 // create schema
 
@@ -162,6 +161,7 @@ const studentSchema = new Schema<TStudent, StudentModel>({
     enum: ['active', 'blocked'],
     default: 'active',
   },
+  isDeleted: { type: Boolean, default: false },
 });
 
 // pre save middleware / hook -> document middleware
@@ -181,6 +181,22 @@ studentSchema.pre('save', async function (next) {
 studentSchema.post('save', function (doc, next) {
   doc.password = '';
 
+  next();
+});
+
+// query middleware
+
+studentSchema.pre('find', function (next) {
+  this.find({ isDeleted: { $ne: true } });
+  next();
+});
+studentSchema.pre('findOne', function (next) {
+  this.find({ isDeleted: { $ne: true } });
+  next();
+});
+// [ { '$match': { id: '123456789' } } ]
+studentSchema.pre('aggregate', function (next) {
+  this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
   next();
 });
 
