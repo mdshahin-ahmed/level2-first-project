@@ -7,6 +7,9 @@ import {
   TStudent,
   TUserName,
 } from './student.interface';
+import bcrypt from 'bcrypt';
+import config from '../../config';
+import { NextFunction } from 'express';
 
 // create schema
 
@@ -96,7 +99,12 @@ const localGuardianSchema = new Schema<TLocalGuardian>({
 });
 
 const studentSchema = new Schema<TStudent, StudentModel>({
-  id: { type: String, required: true, unique: true }, // for unique we can't insert duplicate data
+  id: { type: String, required: [true, 'id is required'], unique: true }, // for unique we can't insert duplicate data
+  password: {
+    type: String,
+    required: [true, 'password is required'],
+    maxlength: [15, 'Password can not be more then 20 characters '],
+  }, // for unique we can't insert duplicate data
   name: { type: userNameSchema, required: true },
   gender: {
     type: String,
@@ -154,6 +162,24 @@ const studentSchema = new Schema<TStudent, StudentModel>({
     enum: ['active', 'blocked'],
     default: 'active',
   },
+});
+
+// pre save middleware / hook -> document middleware
+
+studentSchema.pre('save', async function (next) {
+  // console.log(this, 'pre hook : we will save the data');
+  // eslint-disable-next-line @typescript-eslint/no-this-alias
+  const user = this;
+  // hashing password and save into DB
+  user.password = await bcrypt.hash(
+    user.password,
+    Number(config.bcrypt_salt_round),
+  );
+  next();
+});
+// post save middleware -> hook : will work on create() or save()
+studentSchema.post('save', function () {
+  console.log(this, 'post hook : we saved our  data');
 });
 
 // creating a custom static method
