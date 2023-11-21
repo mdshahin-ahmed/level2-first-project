@@ -169,7 +169,7 @@ const studentSchema = new Schema<TStudent, StudentModel>({
 studentSchema.pre('save', async function (next) {
   // console.log(this, 'pre hook : we will save the data');
   // eslint-disable-next-line @typescript-eslint/no-this-alias
-  const user = this;
+  const user = this; // current document that we send
   // hashing password and save into DB
   user.password = await bcrypt.hash(
     user.password,
@@ -178,8 +178,10 @@ studentSchema.pre('save', async function (next) {
   next();
 });
 // post save middleware -> hook : will work on create() or save()
-studentSchema.post('save', function () {
-  console.log(this, 'post hook : we saved our  data');
+studentSchema.post('save', function (doc, next) {
+  doc.password = '';
+
+  next();
 });
 
 // creating a custom static method
