@@ -7,8 +7,6 @@ import {
   TStudent,
   TUserName,
 } from './student.interface';
-import bcrypt from 'bcrypt';
-import config from '../../config';
 
 // create schema
 
@@ -106,11 +104,6 @@ const studentSchema = new Schema<TStudent, StudentModel>(
       unique: true,
       ref: 'User',
     },
-    password: {
-      type: String,
-      required: [true, 'password is required'],
-      maxlength: [15, 'Password can not be more then 20 characters '],
-    }, // for unique we can't insert duplicate data
     name: { type: userNameSchema, required: true },
     gender: {
       type: String,
@@ -178,26 +171,6 @@ studentSchema.virtual('fullName').get(function () {
   return (
     this.name.firstName + ' ' + this.name.middleName + ' ' + this.name.lastName
   );
-});
-
-// pre save middleware / hook -> document middleware
-
-studentSchema.pre('save', async function (next) {
-  // console.log(this, 'pre hook : we will save the data');
-  // eslint-disable-next-line @typescript-eslint/no-this-alias
-  const user = this; // current document that we send
-  // hashing password and save into DB
-  user.password = await bcrypt.hash(
-    user.password,
-    Number(config.bcrypt_salt_round),
-  );
-  next();
-});
-// post save middleware -> hook : will work on create() or save()
-studentSchema.post('save', function (doc, next) {
-  doc.password = '';
-
-  next();
 });
 
 // query middleware
