@@ -100,6 +100,12 @@ const localGuardianSchema = new Schema<TLocalGuardian>({
 const studentSchema = new Schema<TStudent, StudentModel>(
   {
     id: { type: String, required: [true, 'id is required'], unique: true }, // for unique we can't insert duplicate data
+    user: {
+      type: Schema.Types.ObjectId,
+      required: [true, 'User id is required'],
+      unique: true,
+      ref: 'User',
+    },
     password: {
       type: String,
       required: [true, 'password is required'],
@@ -157,11 +163,7 @@ const studentSchema = new Schema<TStudent, StudentModel>(
     guardian: { type: guardianSchema, required: true },
     localGuardian: { type: localGuardianSchema, required: true },
     profileImg: { type: String },
-    isActive: {
-      type: String,
-      enum: ['active', 'blocked'],
-      default: 'active',
-    },
+
     isDeleted: { type: Boolean, default: false },
   },
   {
