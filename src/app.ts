@@ -14,7 +14,8 @@ app.use(express.json());
 app.use(cors());
 
 // application routes
-app.use('/api/v1/students', router);
+// /api/v1/students
+app.use('/api/v1', router);
 
 const getAController = (req: Request, res: Response) => {
   const a = 10;
