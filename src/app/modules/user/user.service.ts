@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import httpStatus from 'http-status';
 import config from '../../config';
 import AppError from '../../errors/app.error';
@@ -56,10 +57,10 @@ const createStudentIntoDB = async (password: string, payload: TStudent) => {
     await session.endSession();
 
     return newStudent;
-  } catch (error) {
+  } catch (error: any) {
     await session.abortTransaction();
     await session.endSession();
-    throw new AppError(httpStatus.INTERNAL_SERVER_ERROR, 'Something is wrong');
+    throw new Error(error);
   }
 };
 
