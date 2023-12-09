@@ -57,7 +57,7 @@ const assignFacultiesWithCourse: RequestHandler = catchAsync(
     sendResponse(res, {
       success: true,
       statusCode: httpStatus.OK,
-      message: 'Deleted course successfully!',
+      message: 'Faculties assign successfully!',
       data: result,
     });
   },
