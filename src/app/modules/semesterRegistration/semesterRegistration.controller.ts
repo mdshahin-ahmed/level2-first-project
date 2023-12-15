@@ -1,16 +1,19 @@
 import httpStatus from 'http-status';
 import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
+import { semesterRegistrationServices } from './semesterRegistration.service';
 
 const createSemesterRegistration = catchAsync(async (req, res) => {
-  // const { id } = req.params;
-  // const result = await semesterRegistrationServices.getSingleFacultyFromDB( id );
-  // sendResponse(res, {
-  //   statusCode: httpStatus.OK,
-  //   success: true,
-  //   message: 'Faculty is retrieved succesfully',
-  //   data: result,
-  // });
+  const result =
+    await semesterRegistrationServices.createSemesterRegistrationIntoDB(
+      req.body,
+    );
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Faculty is retrieved succesfully!',
+    data: result,
+  });
 });
 const updateSemesterRegistration = catchAsync(async (req, res) => {
   // const { id } = req.params;
