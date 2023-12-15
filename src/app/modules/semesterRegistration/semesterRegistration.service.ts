@@ -4,6 +4,7 @@ import { AcademicSemester } from '../academicSemester/academicSemester.model';
 import { TSemesterRegistration } from './semesterRegistration.interface';
 import { SemesterRegistration } from './semesterRegistration.model';
 import QueryBuilder from '../../builder/QueryBuilder';
+import { registrationStatus } from './semesterRegistration.constants';
 
 const createSemesterRegistrationIntoDB = async (
   payload: TSemesterRegistration,
@@ -14,7 +15,10 @@ const createSemesterRegistrationIntoDB = async (
 
   const isThereAnyUpcomingOrOnGoingSemester =
     await SemesterRegistration.findOne({
-      $or: [{ status: 'UPCOMING' }, { status: 'ONGOING' }],
+      $or: [
+        { status: registrationStatus.UPCOMING },
+        { status: registrationStatus.ONGOING },
+      ],
     });
 
   if (isThereAnyUpcomingOrOnGoingSemester) {
@@ -90,12 +94,41 @@ const updateSemesterRegistrationIntoDB = async (
 
   const currentSemesterStatus = isSemesterRegistrationExists.status;
 
-  if (currentSemesterStatus === 'ENDED') {
+  const requestedStatus = payload?.status;
+
+  if (currentSemesterStatus === registrationStatus.ENDED) {
     throw new AppError(
       httpStatus.BAD_REQUEST,
       `This semester is already ${currentSemesterStatus}`,
     );
   }
+
+  // UPCOMING --> ONGOING --> ENDED
+  if (
+    currentSemesterStatus === registrationStatus.UPCOMING &&
+    requestedStatus === registrationStatus.ENDED
+  ) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      `You can not directly change status from ${currentSemesterStatus} to ${requestedStatus}`,
+    );
+  }
+  if (
+    currentSemesterStatus === registrationStatus.ONGOING &&
+    requestedStatus === registrationStatus.UPCOMING
+  ) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      `You can not directly change status from ${currentSemesterStatus} to ${requestedStatus}`,
+    );
+  }
+
+  const result = await SemesterRegistration.findByIdAndUpdate(id, payload, {
+    new: true,
+    runValidators: true,
+  });
+
+  return result;
 };
 
 export const semesterRegistrationServices = {
