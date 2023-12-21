@@ -2,7 +2,8 @@ import httpStatus from 'http-status';
 import AppError from '../../errors/app.error';
 import { User } from '../user/user.model';
 import { TLoginUser } from './auth.interface';
-import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import config from '../../config';
 
 const loginUser = async (payload: TLoginUser) => {
   // checking is the user is exist
@@ -17,6 +18,7 @@ const loginUser = async (payload: TLoginUser) => {
   if (isDeleted) {
     throw new AppError(httpStatus.FORBIDDEN, 'This user is deleted');
   }
+
   // checking if the user is blocked
   const userStatus = user?.status;
   if (userStatus === 'blocked') {
@@ -31,7 +33,18 @@ const loginUser = async (payload: TLoginUser) => {
 
   // create token and sent to the client
 
-  return {};
+  const jwtPayload = {
+    userId: user.id,
+    role: user.role,
+  };
+
+  const accessToken = jwt.sign(jwtPayload, config.jwt_access_secret as string, {
+    expiresIn: '10d',
+  });
+  return {
+    accessToken,
+    needsPasswordChange: user?.needsPasswordChange,
+  };
 };
 
 export const AuthServices = {
