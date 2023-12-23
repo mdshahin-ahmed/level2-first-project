@@ -10,7 +10,7 @@ const getSingleFaculty = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Faculty is retrieved succesfully',
+    message: 'Faculty is retrieved successfully',
     data: result,
   });
 });
@@ -21,7 +21,7 @@ const getAllFaculties = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Faculties are retrieved succesfully',
+    message: 'Faculties are retrieved successfully',
     data: result,
   });
 });
