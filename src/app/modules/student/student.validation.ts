@@ -1,13 +1,10 @@
 import { z } from 'zod';
 
 const createUserNameValidationSchema = z.object({
-  firstName: z
-    .string()
-    .min(1)
-    .max(20)
-    .refine((value) => /^[A-Za-z]+$/.test(value), {
-      message: 'First name must only contain alphabetic characters.',
-    }),
+  firstName: z.string().min(1).max(20),
+  // .refine((value) => /^[A-Za-z]+$/.test(value), {
+  //   message: 'First name must only contain alphabetic characters.',
+  // }),
   middleName: z.string().min(1).optional(),
   lastName: z
     .string()
