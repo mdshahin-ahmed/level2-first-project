@@ -188,11 +188,22 @@ const getMe = async (token: string) => {
   const decoded = verifyToken(token, config.jwt_access_secret as string);
 
   const { userId, role } = decoded;
-  console.log(userId, role);
 
-  // const result = await User;
+  let result = null;
 
-  return {};
+  if (role === 'student') {
+    result = await Student.findOne({ id: userId });
+  }
+
+  if (role === 'admin') {
+    result = await Admin.findOne({ id: userId });
+  }
+
+  if (role === 'faculty') {
+    result = await Faculty.findOne({ id: userId });
+  }
+
+  return result;
 };
 
 export const UserServices = {
