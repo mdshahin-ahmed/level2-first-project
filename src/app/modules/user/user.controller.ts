@@ -1,4 +1,4 @@
-import { Request, RequestHandler } from 'express';
+import { RequestHandler } from 'express';
 import { UserServices } from './user.service';
 import sendResponse from '../../utils/sendResponse';
 import httpStatus from 'http-status';
@@ -7,15 +7,16 @@ import catchAsync from '../../utils/catchAsync';
 const createStudent: RequestHandler = catchAsync(async (req, res) => {
   const { password, student: studentData } = req.body;
 
-  console.log('file', req.file);
-  console.log('data', req.body);
-
-  // const result = await UserServices.createStudentIntoDB(password, studentData);
+  const result = await UserServices.createStudentIntoDB(
+    req.file,
+    password,
+    studentData,
+  );
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
     message: 'Student is created successfully!',
-    data: null,
+    data: result,
   });
 });
 
@@ -27,7 +28,7 @@ const createFaculty = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Faculty is created succesfully',
+    message: 'Faculty is created successfully',
     data: result,
   });
 });
