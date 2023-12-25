@@ -103,8 +103,6 @@ const createFacultyIntoDB = async (
   // set faculty email
   userData.email = payload.email;
 
-  console.log(payload.academicDepartment);
-
   // find academic department info
   const academicDepartment = await AcademicDepartment.findById(
     payload.academicDepartment,
