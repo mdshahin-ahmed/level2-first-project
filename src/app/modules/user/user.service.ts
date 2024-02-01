@@ -41,6 +41,17 @@ const createStudentIntoDB = async (
     payload.admissionSemester,
   );
 
+  // find academic department info
+  const academicDepartment = await AcademicDepartment.findById(
+    payload.academicDepartment,
+  );
+
+  if (!academicDepartment) {
+    throw new AppError(400, 'Academic department not found');
+  }
+
+  payload.academicFaculty = academicDepartment.academicFaculty;
+
   // start session
   const session = await mongoose.startSession();
 
@@ -54,10 +65,13 @@ const createStudentIntoDB = async (
     // set generated id
     userData.id = await generateStudentId(admissionSemester);
 
-    // send image to cloudinary
-    const imageName = `${userData.id}${payload?.name?.firstName}`;
-    const path = file?.path;
-    const { secure_url } = await sendImageToCloudinary(imageName, path);
+    if (file) {
+      // send image to cloudinary
+      const imageName = `${userData.id}${payload?.name?.firstName}`;
+      const path = file?.path;
+      const { secure_url } = await sendImageToCloudinary(imageName, path);
+      payload.profileImg = secure_url as string;
+    }
 
     // create a user (transaction -> 1)
     const newUser = await User.create([userData], { session }); // need to pass array
@@ -68,7 +82,7 @@ const createStudentIntoDB = async (
     // set id, and _id as user
     payload.id = newUser[0].id;
     payload.user = newUser[0]._id;
-    payload.profileImg = secure_url;
+
     // create a student (transaction -> 2)
     const newStudent = await Student.create([payload], { session });
     if (!newStudent.length) {
