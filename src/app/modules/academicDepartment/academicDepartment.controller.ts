@@ -20,12 +20,15 @@ const createAcademicDepartment: RequestHandler = catchAsync(
 const getAllAcademicDepartment: RequestHandler = catchAsync(
   async (req, res) => {
     const result =
-      await AcademicDepartmentServices.getAllAcademicDepartmentFromDB();
+      await AcademicDepartmentServices.getAllAcademicDepartmentFromDB(
+        req.query,
+      );
     sendResponse(res, {
       success: true,
       statusCode: httpStatus.OK,
       message: 'Fetched all academic department successfully!',
-      data: result,
+      meta: result.meta,
+      data: result.result,
     });
   },
 );

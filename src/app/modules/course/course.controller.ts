@@ -20,7 +20,8 @@ const getAllCourses: RequestHandler = catchAsync(async (req, res) => {
     success: true,
     statusCode: httpStatus.OK,
     message: 'Course are faculties successfully!',
-    data: result,
+    meta: result.meta,
+    data: result.result,
   });
 });
 
